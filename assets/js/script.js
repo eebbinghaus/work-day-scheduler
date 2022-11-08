@@ -1,8 +1,6 @@
-
-
+// Ensures that the DOM is ready before the JavaScript code executes
 $(document).ready(function () {
   var parentDiv = $(".container-fluid").children("div");
-
 
   // Saves the comments and time of events into local storage
   $(function () {
@@ -17,9 +15,8 @@ $(document).ready(function () {
     var today = dayjs();
     $("#currentDay").text(today.format("MMM D, YYYY"));
 
-    // Saves the current hour 
+    // Saves the current hour
     var currentHour = dayjs().hour();
-
 
     // Applies the corresponding CSS styles to the app dependant on the current time of day
     var timesArr = [];
@@ -51,5 +48,4 @@ $(".container-fluid")
   .each(function () {
     var savedLocal = localStorage.getItem($(this).attr("id"));
     $(this).children("textarea").text(savedLocal);
-    
   });
