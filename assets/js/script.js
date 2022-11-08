@@ -1,59 +1,55 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
 
-// TODO: Add a listener for click events on the save button. This code should
-// use the id in the containing time-block as a key to save the user input in
-// local storage. HINT: What does `this` reference in the click listener
-// function? How can DOM traversal be used to get the "hour-x" id of the
-// time-block containing the button that was clicked? How might the id be
-// useful when saving the description in local storage?
-//
-// TODO: Add code to apply the past, present, or future class to each time
-// block by comparing the id to the current hour. HINTS: How can the id
-// attribute of each time-block be used to conditionally add or remove the
-// past, present, and future classes? How can Day.js be used to get the
-// current hour in 24-hour time?
-//
-// TODO: Add code to get any user input that was saved in localStorage and set
-// the values of the corresponding textarea elements. HINT: How can the id
-// attribute of each time-block be used to do this?
-//
-// TODO: Add code to display the current date in the header of the page. DONE
-$(function () {
-  var today = dayjs();
-  $("#currentDay").text(today.format("MMM D, YYYY"));
 
-  var currentHour = dayjs().hour();
+$(document).ready(function () {
+  var parentDiv = $(".container-fluid").children("div");
 
-  var timesArr = [];
-  i = 0;
-  $("div.row").each(function () {
-    timesArr[i++] = $(this).attr("data-hour");
-  });
 
-  function checkTime() {
-    var parentDiv = $(".container-fluid").children("div");
+  // Saves the comments and time of events into local storage
+  $(function () {
+    var saveButton = $(".saveBtn").on("click", function () {
+      var timeOfEvent = $(this).parent().attr("id");
+      var textComment = $(this).siblings(".description").val();
 
-    parentDiv.each(function () {
-      var dataAtribute = $(this).attr("data-hour");
-      if (parseInt(dataAtribute) == currentHour) {
-        $(this).addClass("present");
-        $(this).removeClass("past");
-        $(this).removeClass("future");
-      }
-      if (parseInt(dataAtribute) < currentHour) {
-        $(this).removeClass("present");
-        $(this).removeClass("future");
-        $(this).addClass("past");
-      }
-      if (parseInt(dataAtribute) > currentHour) {
-        $(this).removeClass("present");
-        $(this).removeClass("past");
-        $(this).addClass("future");
-      }
+      localStorage.setItem(timeOfEvent, textComment);
     });
-  }
 
-  checkTime();
+    // Sets current date to the top of the page
+    var today = dayjs();
+    $("#currentDay").text(today.format("MMM D, YYYY"));
+
+    // Saves the current hour 
+    var currentHour = dayjs().hour();
+
+
+    // Applies the corresponding CSS styles to the app dependant on the current time of day
+    var timesArr = [];
+    i = 0;
+    $("div.row").each(function () {
+      timesArr[i++] = $(this).attr("data-hour");
+    });
+    function checkTime() {
+      parentDiv.each(function () {
+        var dataAtribute = $(this).attr("data-hour");
+        if (parseInt(dataAtribute) == currentHour) {
+          $(this).addClass("present");
+        }
+        if (parseInt(dataAtribute) < currentHour) {
+          $(this).addClass("past");
+        }
+        if (parseInt(dataAtribute) > currentHour) {
+          $(this).addClass("future");
+        }
+      });
+    }
+
+    checkTime();
+  });
 });
+// Loops through and gets items that are saved in local storage
+$(".container-fluid")
+  .children("div")
+  .each(function () {
+    var savedLocal = localStorage.getItem($(this).attr("id"));
+    $(this).children("textarea").text(savedLocal);
+    
+  });
